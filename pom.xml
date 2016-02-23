@@ -12,11 +12,11 @@
 		<spring.version>4.2.1.RELEASE</spring.version>
 	</properties>
 	<!-- 如有Nexus私服, 取消注释并指向正确的服务器地址. -->
-	<!-- <repositories>
+	<repositories>
 		<repository>
 			<id>nexus</id>
 			<name>Team Nexus Repository</name>
-			<url>http://nexus.gi.com/nexus/content/groups/public</url>
+			<url>http://nexus.gi.com/content/groups/public/</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -28,7 +28,7 @@
 				<checksumPolicy>ignore</checksumPolicy>
 			</releases>
 		</repository>
-	</repositories> -->
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework</groupId>
