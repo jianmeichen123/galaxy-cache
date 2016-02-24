@@ -48,6 +48,7 @@
 	<bean id="jedis.shardInfo" class="redis.clients.jedis.JedisShardInfo">
 		<constructor-arg index="0" value="${redis.host}" />
 		<constructor-arg index="1" value="${redis.port}" />
+		<property name="password" value="${redis.password}"></property>
 	</bean>
 
 	<bean id="jedisPool" class="redis.clients.jedis.ShardedJedisPool">
@@ -58,9 +59,11 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	
 	<bean id="singleClient" class="redis.clients.jedis.Client">
 		<constructor-arg index="0" value="${redis.host}" />
 		<constructor-arg index="1" value="${redis.port}" />
+		<property name="password" value="${redis.password}"></property>
 	</bean>
 	<bean id="cache" class="com.galaxyinternet.framework.cache.Cache">
 		<property name="jedisPool" ref="jedisPool"></property>
