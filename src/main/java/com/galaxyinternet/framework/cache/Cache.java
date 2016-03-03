@@ -90,6 +90,22 @@ public class Cache {
 
 	}
 
+	public Object hgetByRedis(String hashtable, String key) {
+		ShardedJedis jedis = jedisPool.getResource();
+		Object obj = null;
+		try {
+			byte[] bytes = jedis.hget(SafeEncoder.encode(hashtable), SafeEncoder.encode(key));
+			obj = cacheHelper.bytesToObject(bytes);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return obj;
+
+	}
+
 	/**
 	 * 获取常规对象的方法
 	 * 
@@ -141,6 +157,30 @@ public class Cache {
 
 	}
 
+	public Object hget(String hashtable, String key) {
+		Object result;
+		if (local == true) {
+			result = localCache.get(key);
+			if (result != null) {
+				return result;
+			}
+		}
+		if (useRedis == true) {
+			result = hgetByRedis(hashtable, key);
+			if (result != null) {
+				localCache.put(key, result, localTTL);
+			}
+			return result;
+		} else {
+			result = getByMemc(key);
+			if (result != null) {
+				localCache.put(key, result, localTTL);
+			}
+			return result;
+		}
+
+	}
+
 	public long getTTL(String key) {
 		long ttl = 0;
 		ShardedJedis jedis = jedisPool.getResource();
@@ -171,6 +211,18 @@ public class Cache {
 			return setByRedis(key, value, expiredTime);
 		} else {
 			setByMemc(key, value, expiredTime);
+			return true;
+		}
+	}
+
+	public boolean hset(String hashtable, String key, String value) {
+		if (local == true) {
+			localCache.put(key, value);
+		}
+		if (useRedis == true) {
+			return hsetByRedis(hashtable, key, value);
+		} else {
+			setByMemc(key, value, 0);
 			return true;
 		}
 	}
@@ -227,6 +279,21 @@ public class Cache {
 			if (expiredTime > 0) {
 				jedis.expire(SafeEncoder.encode(key), expiredTime);
 			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+			tag = false;
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return tag;
+	}
+
+	public boolean hsetByRedis(String hashtable, String key, String value) {
+		ShardedJedis jedis = jedisPool.getResource();
+		boolean tag = true;
+		try {
+			jedis.hset(SafeEncoder.encode(hashtable), SafeEncoder.encode(key), cacheHelper.objectToBytes(value));
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage());
 			tag = false;
