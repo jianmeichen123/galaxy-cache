@@ -3,11 +3,10 @@ package com.galaxyinternet.framework.cache;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import net.spy.memcached.MemcachedClient;
-import net.spy.memcached.OperationTimeoutException;
-
 import org.apache.log4j.Logger;
 
+import net.spy.memcached.MemcachedClient;
+import net.spy.memcached.OperationTimeoutException;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.util.SafeEncoder;
@@ -265,9 +264,9 @@ public class Cache {
 			localCache.put(key, value, localTTL);
 		}
 		if (useRedis == true) {
-			return setByRedis(key, value, localTTL);
+			return setByRedis(key, value, 0);
 		} else {
-			return setByMemc(key, value, localTTL);
+			return setByMemc(key, value, 0);
 		}
 	}
 
