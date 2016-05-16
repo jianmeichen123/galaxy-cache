@@ -4,7 +4,7 @@
 	<groupId>com.galaxyinternet</groupId>
 	<artifactId>galaxy-cache</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.5.20-SNAPSHOT</version>
 	<name />
 	<description />
 	<properties>
@@ -159,12 +159,6 @@
 				<redis.host>10.9.210.22</redis.host>
 				<redis.port>16379</redis.port>
 				<redis.password>xhhl-redis</redis.password>
-				<redis.cluster.address.node1>10.9.21.156:7000</redis.cluster.address.node1>
-				<redis.cluster.address.node2>10.9.21.156:7001</redis.cluster.address.node2>
-				<redis.cluster.address.node3>10.9.21.156:7002</redis.cluster.address.node3>
-				<redis.cluster.address.node4>10.9.21.156:7003</redis.cluster.address.node4>
-				<redis.cluster.address.node5>10.9.21.156:7004</redis.cluster.address.node5>
-				<redis.cluster.address.node6>10.9.21.156:7005</redis.cluster.address.node6>
 			</properties>
 		</profile>
 		<profile>
