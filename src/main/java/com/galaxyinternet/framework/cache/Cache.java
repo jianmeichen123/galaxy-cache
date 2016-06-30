@@ -104,6 +104,89 @@ public class Cache {
 		return obj;
 
 	}
+	
+	/**
+	 * 判key 和value 是否存在
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public long setNx(String lockKey,String value){
+		ShardedJedis jedis = jedisPool.getResource();
+		long isExit = 0;
+		try{
+			isExit = jedis.setnx(lockKey,value);
+		}catch(Exception e){
+			logger.error(e.getLocalizedMessage());
+		}finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+		return isExit;
+	}
+	
+	/**
+	 * 重新存放键值
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public String getSet(String lockKey,String value){
+		 ShardedJedis jedis = jedisPool.getResource();
+		 String getValue = null;
+		 try{
+			 getValue = jedis.getSet(lockKey, String.valueOf(value));
+		 }catch(Exception e){
+			 logger.error(e.getLocalizedMessage());
+		 }finally {
+				if (jedis != null)
+					jedisPool.returnResource(jedis);
+		 }
+		 return getValue;
+		
+	}
+	
+	/**
+	 * 获取value
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public String getValue(String lockKey){
+		 ShardedJedis jedis = jedisPool.getResource();
+		 String getValue = null;
+		 try{
+			 getValue = jedis.get(lockKey);
+		 }catch(Exception e){
+			 logger.error(e.getLocalizedMessage());
+		 }finally {
+				if (jedis != null)
+					jedisPool.returnResource(jedis);
+		 }
+		 return getValue;
+		
+	}
+	
+	/**
+	 * 获取value
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public void setValue(String lockKey,String value){
+		 ShardedJedis jedis = jedisPool.getResource();
+		 try{
+			 jedis.set(lockKey,value);
+		 }catch(Exception e){
+			 logger.error(e.getLocalizedMessage());
+		 }finally {
+				if (jedis != null)
+					jedisPool.returnResource(jedis);
+		 }
+		
+	}
+	
 
 	/**
 	 * 获取常规对象的方法
@@ -376,5 +459,6 @@ public class Cache {
 	public void setJedis(ShardedJedis jedis) {
 		this.jedis = jedis;
 	}
+
 
 }
