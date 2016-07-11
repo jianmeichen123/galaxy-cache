@@ -130,6 +130,24 @@ public class Cache {
 		}
 		
 	}
+    
+    /**
+     * 移除key
+     * @param key
+     * @param plupload
+     */
+    public void removeRedisKeyOBJ(String key){
+    	ShardedJedis jedis = jedisPool.getResource();
+		try {
+			jedis.del(key.getBytes());
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+	}
 
 	/**
 	 * 获取cache封装后的对象
