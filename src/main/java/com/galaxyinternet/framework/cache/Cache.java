@@ -1,5 +1,9 @@
 package com.galaxyinternet.framework.cache;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -65,6 +69,66 @@ public class Cache {
 
 		return memcachedClient.get(key);
 
+	}
+	
+	/**
+	 * 向集合中添加
+	 * @param key
+	 * @param plupload
+	 */
+    public void setRedisSetOBJ(String key, Object plupload){
+    	ShardedJedis jedis = jedisPool.getResource();
+		try {
+			jedis.sadd(key.getBytes(), SerializeTranscoder.serialize(plupload));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+	}
+    
+    /**
+     * redis取出集合数据
+     * @param key
+     * @return
+     */
+	public List<Object> getRedisQuenOBJ(String key){
+    	ShardedJedis jedis = jedisPool.getResource();
+		List<Object> list = new ArrayList<Object>();
+		try {
+			Set<byte[]>  in = jedis.smembers(key.getBytes());
+			Iterator<byte[]> t1=in.iterator() ;   
+			  while(t1.hasNext()){   
+			      byte[] bytes=(byte[]) t1.next();  
+			      Object o=SerializeTranscoder.unserizlize(bytes);
+			      list.add(o);
+			  }  
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return list;
+	}
+    /**
+     * 从集合中移除某个元素
+     * @param key
+     * @param plupload
+     */
+    public void removeRedisSetOBJ(String key, Object plupload){
+    	ShardedJedis jedis = jedisPool.getResource();
+		try {
+			jedis.srem(key.getBytes(),  cacheHelper.objectToBytes(plupload));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
 	}
 
 	/**
