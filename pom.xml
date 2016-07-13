@@ -150,15 +150,6 @@
 	</build>
 	<profiles>
 		<profile>
-			<id>nginx</id>
-			<properties>
-				<redis.cache.expiredTime>1800</redis.cache.expiredTime>
-				<redis.host>10.9.210.22</redis.host>
-				<redis.port>16379</redis.port>
-				<redis.password>xhhl-redis</redis.password>
-			</properties>
-		</profile>
-		<profile>
 			<id>dev</id>
 			<properties>
 				<redis.cache.expiredTime>1800</redis.cache.expiredTime>
