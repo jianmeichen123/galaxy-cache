@@ -4,7 +4,7 @@
 	<groupId>com.galaxyinternet</groupId>
 	<artifactId>galaxy-cache</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.3.mobile</version> 
+	<version>1.0.1</version> 
 	<name />
 	<description />
 	<properties>
