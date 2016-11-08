@@ -467,6 +467,21 @@ public class Cache {
 		}
 		return tag;
 	}
+	
+	public long incrBy(String key, long init)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		long rtn = 0L;
+		try {
+			jedis.incrBy(SafeEncoder.encode(key), init);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
 
 	public boolean setByMemc(String key, Object value, Integer expiredTime) {
 		Future<Boolean> future = memcachedClient.set(key, expiredTime, value);
