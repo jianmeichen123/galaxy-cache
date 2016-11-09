@@ -1,8 +1,11 @@
 package com.galaxyinternet.framework.cache;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -185,6 +188,28 @@ public class Cache {
 		}
 		return obj;
 
+	}
+	
+	public Map<String,Object> hgetAll(String hashtable)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		Map<String,Object> map = new HashMap<>();
+		try {
+			Map<byte[],byte[]> hash = jedis.hgetAll(SafeEncoder.encode(hashtable));
+			if(hash != null && hash.size()>0)
+			{
+				for(Entry<byte[],byte[]> entry : hash.entrySet())
+				{
+					map.put(new String(entry.getKey(),"UTF-8"), cacheHelper.bytesToObject(entry.getValue()));
+				}
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return map;
 	}
 	
 	/**
