@@ -517,6 +517,21 @@ public class Cache {
 		}
 		return false;
 	}
+	
+	public boolean exists(String key)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		boolean rtn = false;
+		try {
+			rtn = jedis.exists(SafeEncoder.encode(key));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
 
 	public MemcachedClient getMemcachedClient() {
 		return memcachedClient;
