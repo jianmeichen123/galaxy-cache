@@ -498,7 +498,7 @@ public class Cache {
 		ShardedJedis jedis = jedisPool.getResource();
 		long rtn = 0L;
 		try {
-			jedis.incrBy(SafeEncoder.encode(key), init);
+			rtn = jedis.incrBy(SafeEncoder.encode(key), init);
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage());
 		} finally {
