@@ -19,12 +19,13 @@
 	
 	<!-- 依赖的服务属性配置器 -->
 	<bean id="propertyConfigurer" 
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">  
 		<property name="locations">
 			<list>
 				<value>classpath:redis/redis.properties</value>
 			</list>
 		</property>
+		<property name="ignoreUnresolvablePlaceholders" value="true"></property>
 	</bean>
 			   
 	<!-- SpyMemcached
