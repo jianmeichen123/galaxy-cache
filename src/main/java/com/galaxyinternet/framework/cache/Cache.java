@@ -507,6 +507,20 @@ public class Cache {
 		}
 		return rtn;
 	}
+	public long expire(String key, int expireTime)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		long rtn = 0L;
+		try {
+			rtn = jedis.expire(SafeEncoder.encode(key), expireTime);
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
 
 	public boolean setByMemc(String key, Object value, Integer expiredTime) {
 		Future<Boolean> future = memcachedClient.set(key, expiredTime, value);
