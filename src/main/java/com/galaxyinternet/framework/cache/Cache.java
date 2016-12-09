@@ -611,5 +611,62 @@ public class Cache {
 		this.jedis = jedis;
 	}
 
+	public long sadd(String key, String... members)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		long rtn = 0l;
+		try
+		{
+			rtn = jedis.sadd(key, members);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
 
+	public Set<String> smembers(String key)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		Set<String> set = null;
+		try
+		{
+			set = jedis.smembers(key);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return set;
+	}
+	public long srem(String key, String... members)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		long rtn = 0l;
+		try
+		{
+			rtn = jedis.srem(key, members);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
 }
