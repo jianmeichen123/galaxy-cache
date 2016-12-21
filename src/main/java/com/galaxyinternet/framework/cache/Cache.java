@@ -669,4 +669,62 @@ public class Cache {
 		}
 		return rtn;
 	}
+	
+	public long lpush(byte[] key, byte[]... strings)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		long rtn = 0l;
+		try
+		{
+			rtn = jedis.lpush(key, strings);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
+	public long rpush(byte[] key, byte[]... strings)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		long rtn = 0l;
+		try
+		{
+			rtn = jedis.rpush(key, strings);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
+	public byte[] rpop(byte[] key)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		byte[] rtn = null;
+		try
+		{
+			rtn = jedis.rpop(key);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
 }
