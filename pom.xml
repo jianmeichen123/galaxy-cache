@@ -4,7 +4,7 @@
 	<groupId>com.galaxyinternet</groupId>
 	<artifactId>galaxy-cache</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.1</version> 
+	<version>1.0.2-SNAPSHOT</version>
 	<name />
 	<description />
 	<properties>
@@ -96,7 +96,7 @@
 			<properties>
 				<redis.cache.expiredTime>1800</redis.cache.expiredTime>
 				<redis.host>10.9.210.22</redis.host>
-				<redis.port>6383</redis.port>
+				<redis.port>16379</redis.port>
 				<redis.password>xhhl-redis</redis.password>
 			</properties>
 		</profile>
