@@ -1,6 +1,7 @@
-/target
-/.classpath
-/.project
-/bin/
-/.settings/
-.iml
+# Created by .ignore support plugin (hsz.mobi)
+*.iml
+/target/
+.idea
+.class
+.project
+.pyc

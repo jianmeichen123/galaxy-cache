@@ -213,7 +213,25 @@ public class Cache {
 			return true;
 		}
 	}
+    /**
+     * 设置redis 带过期时间
+     * @param lockKey
+     * @param value
+     * @param expiredTime
+     */
+    public void setValue(String lockKey,String value,int expiredTime){
+        ShardedJedis jedis = jedisPool.getResource();
+        try{
+            jedis.set(lockKey,value);
+            jedis.expire(lockKey,expiredTime);
+        }catch(Exception e){
+            logger.error(e.getLocalizedMessage());
+        }finally {
+            if (jedis != null)
+                jedisPool.returnResource(jedis);
+        }
 
+    }
 	public boolean hset(String hashtable, String key, String value) {
 		if (local == true) {
 			localCache.put(key, value);
