@@ -1,5 +1,9 @@
 package com.galaxyinternet.framework.cache;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -66,6 +70,84 @@ public class Cache {
 		return memcachedClient.get(key);
 
 	}
+	
+	/**
+	 * 向集合中添加
+	 * @param key
+	 * @param plupload
+	 */
+    public void setRedisSetOBJ(String key, Object plupload){
+    	ShardedJedis jedis = jedisPool.getResource();
+		try {
+			jedis.sadd(key.getBytes(), SerializeTranscoder.serialize(plupload));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+	}
+    
+    /**
+     * redis取出集合数据
+     * @param key
+     * @return
+     */
+	public List<Object> getRedisQuenOBJ(String key){
+    	ShardedJedis jedis = jedisPool.getResource();
+		List<Object> list = new ArrayList<Object>();
+		try {
+			Set<byte[]>  in = jedis.smembers(key.getBytes());
+			Iterator<byte[]> t1=in.iterator() ;   
+			  while(t1.hasNext()){   
+			      byte[] bytes=(byte[]) t1.next();  
+			      Object o=SerializeTranscoder.unserizlize(bytes);
+			      list.add(o);
+			  }  
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return list;
+	}
+    /**
+     * 从集合中移除某个元素
+     * @param key
+     * @param plupload
+     */
+    public void removeRedisSetOBJ(String key, Object plupload){
+    	ShardedJedis jedis = jedisPool.getResource();
+		try {
+			jedis.srem(key.getBytes(),  cacheHelper.objectToBytes(plupload));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+	}
+    
+    /**
+     * 移除key
+     * @param key
+     * @param plupload
+     */
+    public void removeRedisKeyOBJ(String key){
+    	ShardedJedis jedis = jedisPool.getResource();
+		try {
+			jedis.del(key.getBytes());
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+        }finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+	}
 
 	/**
 	 * 获取cache封装后的对象
@@ -104,6 +186,89 @@ public class Cache {
 		return obj;
 
 	}
+	
+	/**
+	 * 判key 和value 是否存在
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public long setNx(String lockKey,String value){
+		ShardedJedis jedis = jedisPool.getResource();
+		long isExit = 0;
+		try{
+			isExit = jedis.setnx(lockKey,value);
+		}catch(Exception e){
+			logger.error(e.getLocalizedMessage());
+		}finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		
+		return isExit;
+	}
+	
+	/**
+	 * 重新存放键值
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public String getSet(String lockKey,String value){
+		 ShardedJedis jedis = jedisPool.getResource();
+		 String getValue = null;
+		 try{
+			 getValue = jedis.getSet(lockKey, String.valueOf(value));
+		 }catch(Exception e){
+			 logger.error(e.getLocalizedMessage());
+		 }finally {
+				if (jedis != null)
+					jedisPool.returnResource(jedis);
+		 }
+		 return getValue;
+		
+	}
+	
+	/**
+	 * 获取value
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public String getValue(String lockKey){
+		 ShardedJedis jedis = jedisPool.getResource();
+		 String getValue = null;
+		 try{
+			 getValue = jedis.get(lockKey);
+		 }catch(Exception e){
+			 logger.error(e.getLocalizedMessage());
+		 }finally {
+				if (jedis != null)
+					jedisPool.returnResource(jedis);
+		 }
+		 return getValue;
+		
+	}
+	
+	/**
+	 * 获取value
+	 * @param lockKey
+	 * @param value
+	 * @return
+	 */
+	public void setValue(String lockKey,String value){
+		 ShardedJedis jedis = jedisPool.getResource();
+		 try{
+			 jedis.set(lockKey,value);
+		 }catch(Exception e){
+			 logger.error(e.getLocalizedMessage());
+		 }finally {
+				if (jedis != null)
+					jedisPool.returnResource(jedis);
+		 }
+		
+	}
+	
 
 	/**
 	 * 获取常规对象的方法
@@ -213,7 +378,25 @@ public class Cache {
 			return true;
 		}
 	}
+    /**
+     * 设置redis 带过期时间
+     * @param lockKey
+     * @param value
+     * @param expiredTime
+     */
+    public void setValue(String lockKey,String value,int expiredTime){
+        ShardedJedis jedis = jedisPool.getResource();
+        try{
+            jedis.set(lockKey,value);
+            jedis.expire(lockKey,expiredTime);
+        }catch(Exception e){
+            logger.error(e.getLocalizedMessage());
+        }finally {
+            if (jedis != null)
+                jedisPool.returnResource(jedis);
+        }
 
+    }
 	public boolean hset(String hashtable, String key, String value) {
 		if (local == true) {
 			localCache.put(key, value);
@@ -376,5 +559,6 @@ public class Cache {
 	public void setJedis(ShardedJedis jedis) {
 		this.jedis = jedis;
 	}
+
 
 }
