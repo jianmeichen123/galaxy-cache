@@ -1,7 +1,9 @@
 package com.galaxyinternet.framework.cache;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import net.spy.memcached.MemcachedClient;
 import net.spy.memcached.OperationTimeoutException;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.util.SafeEncoder;
@@ -715,6 +718,33 @@ public class Cache {
 		try
 		{
 			rtn = jedis.rpop(key);
+		}
+		catch (Exception e)
+		{
+			logger.error(e.getLocalizedMessage());
+		}
+		finally
+		{
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
+	
+	public Set<String> keys(String pattern)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		Set<String> rtn = new HashSet<>();
+		try
+		{
+			Collection<Jedis> shares = jedis.getAllShards();
+			if(shares != null && shares.size() > 0)
+			{
+				for(Jedis share : shares)
+				{
+					rtn.addAll(share.keys(pattern));
+				}
+			}
 		}
 		catch (Exception e)
 		{
