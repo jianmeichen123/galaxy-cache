@@ -4,7 +4,7 @@
 	<groupId>com.galaxyinternet</groupId>
 	<artifactId>galaxy-cache</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.5.20-xingmou-qa-SNAPSHOT</version>
+	<version>1.0.5.20-xingmou-rc-SNAPSHOT</version>
 	<name />
 	<description />
 	<properties>
