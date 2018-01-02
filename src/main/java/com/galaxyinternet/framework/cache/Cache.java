@@ -542,5 +542,52 @@ public class Cache {
 		this.jedis = jedis;
 	}
 
-
+	public Long lpush(String key, Object value) {
+		ShardedJedis jedis = jedisPool.getResource();
+		Long rtn = 0L;
+		try {
+			rtn = jedis.lpush(SafeEncoder.encode(key), cacheHelper.objectToBytes(value));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
+	public Long llen(String key) {
+		ShardedJedis jedis = jedisPool.getResource();
+		Long rtn = 0L;
+		try {
+			rtn = jedis.llen(SafeEncoder.encode(key));
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return rtn;
+	}
+	public List<Object> lrange(String key, Long start, Long end) 
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		List<Object> results = new ArrayList<>();
+		try {
+			List<byte[]> bytesList = jedis.lrange(SafeEncoder.encode(key), start, end);
+			if(bytesList == null || bytesList.size() == 0)
+			{
+				return results;
+			}
+			for(byte[] item : bytesList)
+			{
+				results.add(cacheHelper.bytesToObject(item));
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return results;
+	}
 }
