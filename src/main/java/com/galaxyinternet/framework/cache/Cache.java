@@ -452,6 +452,23 @@ public class Cache {
 		}
 		return tag;
 	}
+	
+	public Long expire(String key, Integer expiredTime)
+	{
+		ShardedJedis jedis = jedisPool.getResource();
+		Long ttl = -1L;
+		try {
+			if (expiredTime > 0) {
+				ttl = jedis.expire(SafeEncoder.encode(key), expiredTime);
+			}
+		} catch (Exception e) {
+			logger.error(e.getLocalizedMessage());
+		} finally {
+			if (jedis != null)
+				jedisPool.returnResource(jedis);
+		}
+		return ttl;
+	}
 
 	public boolean hsetByRedis(String hashtable, String key, String value) {
 		ShardedJedis jedis = jedisPool.getResource();
