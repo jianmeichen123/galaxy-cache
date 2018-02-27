@@ -110,6 +110,15 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>fxnew</id>
+			<properties>
+				<redis.cache.expiredTime>1800</redis.cache.expiredTime>
+				<redis.host>10.9.210.22</redis.host>
+				<redis.port>26379</redis.port>
+				<redis.password>xhhl-redis</redis.password>
+			</properties>
+		</profile>
+		<profile>
 			<id>delivery</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
