@@ -41,14 +41,14 @@
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
 		<property name="maxTotal" value="2000" />
 		<property name="maxIdle" value="50" />
-		<property name="maxWaitMillis" value="1000" />
+		<property name="maxWaitMillis" value="10000" />
 		<property name="testOnBorrow" value="true" />
 	</bean>
 
 	<bean id="jedis.shardInfo" class="redis.clients.jedis.JedisShardInfo">
 		<constructor-arg index="0" value="${redis.host}" />
 		<constructor-arg index="1" value="${redis.port}" type="int" />
-		<property name="password" value="${redis.password}"/>
+		<!-- <property name="password" value="${redis.password}"/> -->
 	</bean>
 
 	<bean id="jedisPool" class="redis.clients.jedis.ShardedJedisPool">
@@ -63,7 +63,7 @@
 	<bean id="singleClient" class="redis.clients.jedis.Client">
 		<constructor-arg index="0" value="${redis.host}" />
 		<constructor-arg index="1" value="${redis.port}" type="int" />
-		<property name="password" value="${redis.password}"/>
+	<!-- 	<property name="password" value="${redis.password}"/> -->
 	</bean>
 	
 	<bean id="cache" class="com.galaxyinternet.framework.cache.Cache">
