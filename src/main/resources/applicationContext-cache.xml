@@ -41,8 +41,8 @@
 	</bean> -->
 	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
 		<property name="maxTotal" value="2000" />
-		<property name="maxIdle" value="50" />
-		<property name="maxWaitMillis" value="1000" />
+		<property name="maxIdle" value="100" />
+		<property name="maxWaitMillis" value="10000" />
 		<property name="testOnBorrow" value="true" />
 	</bean>
 
